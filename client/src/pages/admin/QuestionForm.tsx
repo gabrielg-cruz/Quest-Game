@@ -61,10 +61,18 @@ const QuestionForm: React.FC = () => {
     value: string | boolean
   ) => {
     const newOptions = [...options];
-    // @ts-ignore
-    newOptions[index][field] = value;
+
+    if (field === 'correct') {
+      newOptions[index].correct = value === true || value === 'true';
+    } else if (field === 'optionText') {
+      newOptions[index].optionText = value as string;
+    } else if (field === 'questionId') {
+      newOptions[index].questionId = Number(value); // apenas se realmente for editável
+    }
+
     setOptions(newOptions);
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,12 +82,14 @@ const QuestionForm: React.FC = () => {
         : { questionText, difficulty, themeId, options };
       if (isEdit) {
         await updateQuestion(Number(id), payload as QuestionUpdateDTO);
+
       } else {
         await createQuestion(payload as QuestionCreateDTO);
       }
       navigate('/admin/questions');
     } catch (err) {
       console.error('Erro ao salvar questão', err);
+
     }
   };
 
@@ -116,11 +126,19 @@ const QuestionForm: React.FC = () => {
                 <label>
                   Correta?
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="correctOption" // mesmo nome para todas as opções
                     checked={opt.correct}
-                    onChange={e => handleOptionChange(idx, 'correct', e.target.checked)}
+                    onChange={() => {
+                      const newOptions = options.map((o, i) => ({
+                        ...o,
+                        correct: i === idx,
+                      }));
+                      setOptions(newOptions);
+                    }}
                   />
                 </label>
+
               </div>
             ))}
           </div>

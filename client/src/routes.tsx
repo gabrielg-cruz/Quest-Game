@@ -9,10 +9,10 @@ import QuestionForm from './pages/admin/QuestionForm';
 import { useEffect } from 'react';
 
 export default function AppRoutes() {
-    useEffect(() => {
-        document.body.classList.add('admin-mode');
-        return () => { document.body.classList.remove('admin-mode'); }
-      }, []);
+  useEffect(() => {
+    document.body.classList.add('admin-mode');
+    return () => { document.body.classList.remove('admin-mode'); }
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
