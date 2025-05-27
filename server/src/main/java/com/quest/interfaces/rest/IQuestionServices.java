@@ -1,4 +1,4 @@
-package com.quest.interfaces;
+package com.quest.interfaces.rest;
 
 import java.util.List;
 
@@ -10,6 +10,10 @@ import com.quest.models.Question;
 public interface IQuestionServices {
 
     Question findQuestionById(long id);
+
+    Question findRandomByTheme(Long themeId);
+
+    List<QuestionResponseDTO> createMany(List<QuestionCreateDTO> questionCreateDTOs);
 
     List<QuestionResponseDTO> findAll();
 

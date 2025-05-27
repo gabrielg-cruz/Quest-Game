@@ -1,20 +1,24 @@
 package com.quest.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "tiles")
 public class Tile {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
-    private String id;
+    private Long id;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
+
+    @Column(name = "sequence", nullable = false)
+    private int sequence;
 
     @Column(name = "row_index", nullable = false)
     private int row;
@@ -22,28 +26,11 @@ public class Tile {
     @Column(name = "col_index", nullable = false)
     private int col;
 
-    @Transient
-    private SpecialCard specialCard;
-
-    @Transient
-    private Theme questionTheme;
-
-    @Transient
-    private Set<Player> players = new HashSet<>();
-
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -55,6 +42,22 @@ public class Tile {
         this.board = board;
     }
 
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
     public int getCol() {
         return col;
     }
@@ -62,29 +65,4 @@ public class Tile {
     public void setCol(int col) {
         this.col = col;
     }
-
-    public SpecialCard getSpecialCard() {
-        return specialCard;
-    }
-
-    public void setSpecialCard(SpecialCard specialCard) {
-        this.specialCard = specialCard;
-    }
-
-    public Theme getQuestionTheme() {
-        return questionTheme;
-    }
-
-    public void setQuestionTheme(Theme questionTheme) {
-        this.questionTheme = questionTheme;
-    }
-
-    public Set<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Set<Player> players) {
-        this.players = players;
-    }
 }
-

@@ -1,5 +1,7 @@
 package com.quest.dto.rest.Player;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,13 +16,14 @@ public class PlayerCreateDTO {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email should be valid")
     private String email;
 
     @NotNull(message = "Password is required")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, "
-            +
-            "uma letra minúscula, um número e um caractere especial")
     private String password;
+
+    @NotNull(message = "Balance is required")
+    private BigDecimal balance = BigDecimal.ZERO;
 
     public String getName() {
         return name;
@@ -44,6 +47,14 @@ public class PlayerCreateDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 
 }

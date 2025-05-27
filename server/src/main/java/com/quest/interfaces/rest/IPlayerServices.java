@@ -1,5 +1,6 @@
-package com.quest.interfaces;
+package com.quest.interfaces.rest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.quest.dto.rest.Player.PlayerCreateDTO;
@@ -9,6 +10,10 @@ import com.quest.models.Player;
 
 public interface IPlayerServices {
 
+    void addBalance(long id, BigDecimal amount);
+
+    void decreaseBalance(long id, BigDecimal amount);
+
     Player findPlayerById(long id);
 
     PlayerResponseDTO create(PlayerCreateDTO playerCreateDTO);
@@ -16,6 +21,8 @@ public interface IPlayerServices {
     PlayerResponseDTO findById(long id);
 
     void deletePlayerById(long id);
+
+    void addTheme(Long playerId, Long themeId);
 
     PlayerResponseDTO update(PlayerUpdateDTO playerUpdateDTO);
 

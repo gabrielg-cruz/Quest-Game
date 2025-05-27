@@ -1,17 +1,12 @@
 package com.quest.models;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.quest.enums.Difficulty;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,23 +19,21 @@ public class Question {
     private Long id;
 
     @NotBlank(message = "Question text is required")
-    @Size(min = 1, max = 500, message = "Question text must be between 1 and 255 characters")
+    @Size(min = 1, max = 500, message = "Question text must be between 1 and 255")
     @Column(name = "question_text", length = 255, nullable = false)
     private String questionText;
 
-    @NotBlank(message = "Answer is required")
-    @Size(min = 1, max = 255, message = "Answer must be between 1 and 255 characters")
-    @Column(name = "answer", nullable = false)
-    private String answer;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "theme_id", referencedColumnName = "id", nullable = false)
-    private Theme themes;
+    private Theme theme;
 
     @NotNull(message = "Difficulty is required")
     @Column(name = "difficulty", nullable = false)
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<QuestionOption> options = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -58,14 +51,6 @@ public class Question {
         this.questionText = questionText;
     }
 
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
     public Difficulty getDifficulty() {
         return difficulty;
     }
@@ -74,12 +59,25 @@ public class Question {
         this.difficulty = difficulty;
     }
 
-    public Theme getThemes() {
-        return themes;
+    public List<QuestionOption> getOptions() {
+        return options;
     }
 
-    public void setThemes(Theme themes) {
-        this.themes = themes;
+    public void setOptions(List<QuestionOption> options) {
+        this.options = options;
     }
 
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+    }
+
+    public Optional<QuestionOption> getOptionById(Long optionId) {
+        return options.stream()
+                .filter(option -> option.getId().equals(optionId))
+                .findFirst();
+    }
 }
