@@ -25,7 +25,7 @@ const QuestionList: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (
       window.confirm(
-        'Excluir esta questão e todas as suas alternativas?'
+        'Para excluir este tema deve-se excluir as questões associadas a ele.'
       )
     ) {
       await deleteQuestion(id);
@@ -35,50 +35,50 @@ const QuestionList: React.FC = () => {
 
   return (
     <div className='admin-page'>
-        <div className="admin-container">
-          <h2>Questões</h2>
-          <GenericButton
-            variant="secondary"
-            onClick={() => navigate('/admin/questions/new')}
-          >
-            Nova Questão
-          </GenericButton>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Pergunta</th>
-                <th>Dificuldade</th>
-                <th>Tema</th>
-                <th>Ações</th>
+      <div className="admin-container">
+        <h2>Questões</h2>
+        <GenericButton
+          variant="secondary"
+          onClick={() => navigate('/admin/questions/new')}
+        >
+          Nova Questão
+        </GenericButton>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Pergunta</th>
+              <th>Dificuldade</th>
+              <th>Tema</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {questions.map(q => (
+              <tr key={q.id}>
+                <td>{q.id}</td>
+                <td>{q.text}</td>
+                <td>{q.difficulty}</td>
+                <td>{q.themeId}</td>
+                <td>
+                  <GenericButton
+                    variant="secondary"
+                    onClick={() => navigate(`/admin/questions/${q.id}/edit`)}
+                  >
+                    Editar
+                  </GenericButton>
+                  <GenericButton
+                    variant="danger"
+                    onClick={() => handleDelete(q.id)}
+                  >
+                    Excluir
+                  </GenericButton>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {questions.map(q => (
-                <tr key={q.id}>
-                  <td>{q.id}</td>
-                  <td>{q.text}</td>
-                  <td>{q.difficulty}</td>
-                  <td>{q.themeId}</td>
-                  <td>
-                    <GenericButton
-                      variant="secondary"
-                      onClick={() => navigate(`/admin/questions/${q.id}/edit`)}
-                    >
-                      Editar
-                    </GenericButton>
-                    <GenericButton
-                      variant="danger"
-                      onClick={() => handleDelete(q.id)}
-                    >
-                      Excluir
-                    </GenericButton>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
