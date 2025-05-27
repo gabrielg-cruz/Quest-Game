@@ -25,7 +25,7 @@ const ThemeList: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (
       window.confirm(
-        'Excluir este tema e TODAS as questões vinculadas?'
+        'Para excluir um tema, você precisa primeiro excluir todas as questões associadas a ele. Tem certeza que deseja excluir este tema? Esta ação não pode ser desfeita.'
       )
     ) {
       await deleteTheme(id);
@@ -81,6 +81,11 @@ const ThemeList: React.FC = () => {
           </tbody>
         </table>
       </div>
+      <button
+        type="button"
+        onClick={() => navigate('/')}
+        className="bg-black text-white font-semibold py-2 px-6 rounded-xl hover:opacity-90 transition"
+      >VOLTAR</button>
     </div>
   );
 };

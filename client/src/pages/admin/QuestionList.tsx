@@ -25,7 +25,7 @@ const QuestionList: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (
       window.confirm(
-        'Para excluir este tema deve-se excluir as questões associadas a ele.'
+        'Você tem certeza que deseja excluir esta questão? Esta ação não pode ser desfeita.'
       )
     ) {
       await deleteQuestion(id);
@@ -78,7 +78,13 @@ const QuestionList: React.FC = () => {
             ))}
           </tbody>
         </table>
+
       </div>
+      <button
+        type="button"
+        onClick={() => navigate('/')}
+        className="bg-black text-white font-semibold py-2 px-6 rounded-xl hover:opacity-90 transition"
+      >VOLTAR</button>
     </div>
   );
 };

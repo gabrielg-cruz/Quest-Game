@@ -7,6 +7,7 @@ import ThemeForm from './pages/admin/ThemeForm';
 import QuestionList from './pages/admin/QuestionList';
 import QuestionForm from './pages/admin/QuestionForm';
 import { useEffect } from 'react';
+import AdminPage from './pages/admin/AdminPage';
 
 export default function AppRoutes() {
   useEffect(() => {
@@ -15,9 +16,11 @@ export default function AppRoutes() {
   }, []);
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
+      {/* <Route path="/" element={<LoginPage />} />
       <Route path="/game" element={<GamePage />} />
-      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/register" element={<RegisterPage />} /> */}
+
+      <Route path="/" element={<AdminPage />} />
 
       {/* Admin CRUD */}
       <Route path="/admin/themes" element={<ThemeList />} />
