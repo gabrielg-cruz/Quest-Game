@@ -13,9 +13,10 @@ type Field = {
 type GenericFormProps = {
   fields: Field[];
   submitLabel?: React.ReactNode;
-  variant?: "login" | "secondary" | "danger"
+  variant?: "login" | "secondary" | "danger";
   className?: string;
-  method: "POST" | "GET"
+  method: "POST" | "GET";
+  onSubmit?: (values: Record<string, string>) => void;
 };
 
 const GenericForm: React.FC<GenericFormProps> = ({
@@ -23,6 +24,8 @@ const GenericForm: React.FC<GenericFormProps> = ({
   submitLabel = "Enviar",
   variant,
   method,
+  onSubmit,
+  className,
 }) => {
   const [values, setValues] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
@@ -33,18 +36,27 @@ const GenericForm: React.FC<GenericFormProps> = ({
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
+    setValues(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onSubmit) {
+      onSubmit(values);
+    }
   };
 
   return (
-    <form method={method}>
-      {fields.map(({ name, label, type = "text", placeholder, required, ...rest }) => (
-        <div key={name}>
+    <form method={method} onSubmit={handleSubmit} className={className}>
+      {fields.map(({ name, label, type = "text", placeholder, required }) => (
+        <div key={name} className="form-group">
           {label && (
-            <label htmlFor={name}>
+            <label htmlFor={name} className="form-label">
               {label}
             </label>
           )}
@@ -56,8 +68,7 @@ const GenericForm: React.FC<GenericFormProps> = ({
             required={required}
             value={values[name]}
             onChange={handleChange}
-            {...rest}
-            
+            className="form-input"
           />
         </div>
       ))}
