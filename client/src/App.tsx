@@ -1,10 +1,12 @@
 import "./App.css";
-import SessionPage from "./page/SessionPage";
+import GameScreen from "./page/GameScreen";
 
 function App() {
     return (
         <div className='App'>
-            <SessionPage />
+            <div className="board-container">
+                <GameScreen />
+            </div>
         </div>
     );
 }
