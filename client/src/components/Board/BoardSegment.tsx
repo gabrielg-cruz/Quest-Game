@@ -1,4 +1,3 @@
-// src/components/Board/BoardSegment.tsx
 import React from "react";
 import { describeDonutSegment } from "../../utils/math";
 import { Category } from "../../types/game";
@@ -39,7 +38,7 @@ const BoardSegment: React.FC<BoardSegmentProps> = ({
     endAngle
   );
 
-  // Posição para o texto (sigla)
+
   const midAngle = startAngle + (endAngle - startAngle) / 2;
   const textRadius = (outerRadius + innerRadius) / 2;
   const rad = (midAngle * Math.PI) / 180;
@@ -70,7 +69,7 @@ const BoardSegment: React.FC<BoardSegmentProps> = ({
           {category}
         </text>
       )}
-      {/* NÃO desenhamos texto no índice 0 (fatia branca), pois ali vai o “Início | Fim” */}
+     
     </g>
   );
 };

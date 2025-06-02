@@ -1,8 +1,13 @@
-// src/components/Board/Board.tsx
 import React from "react";
 import BoardSegment from "./BoardSegment";
 import Pawn from "./Pawn";
 import { BoardProps } from "../../types/game";
+
+
+const outerRadius = 300;
+const innerRadius = 200;
+const centerCircleRadius = innerRadius - 30;
+const rotationOffset = -90; 
 
 const Board: React.FC<BoardProps> = ({
   categories,
@@ -12,22 +17,14 @@ const Board: React.FC<BoardProps> = ({
   pawns = [],
   isSpinning = false,
 }) => {
-  const totalSegments = categories.length;
- 
-  const outerRadius = 300;
-  const innerRadius = 250;
-  const centerCircleRadius = innerRadius - 18;
-  const rotationOffset = 90;
-  const viewBoxSize = (outerRadius + 20) * 2;
+  const totalSegments = categories.length; 
+  const viewBoxSize = (outerRadius + 20) * 2; 
 
- 
   const [rotationStyle, setRotationStyle] = React.useState<string>("rotate(0deg)");
-
   React.useEffect(() => {
-    if (isSpinning) {
-      
+    if (isSpinning && selectedSegment != null) {
       const finalAngle =
-        5 * 360 + (selectedSegment! * (360 / totalSegments) - rotationOffset);
+        5 * 360 + (selectedSegment * (360 / totalSegments) - rotationOffset);
       setRotationStyle(`rotate(${finalAngle}deg)`);
     } else {
       setRotationStyle("rotate(0deg)");
@@ -48,22 +45,21 @@ const Board: React.FC<BoardProps> = ({
         </radialGradient>
       </defs>
 
-     
       <g
         style={{
           transform: rotationStyle,
-          transformOrigin: "0 0", 
+          transformOrigin: "0 0",
           transition: isSpinning
             ? "transform 2.2s cubic-bezier(0.33, 1, 0.68, 1)"
             : undefined,
         }}
       >
-    
+       
         <circle cx={0} cy={0} r={innerRadius + 2} fill="#D9423D" />
 
-    
+      
         {categories.map((cat, idx) => {
-        
+   
           const color = idx === 0 ? "#FFFFFF" : segmentColors[cat];
           return (
             <BoardSegment
@@ -81,7 +77,6 @@ const Board: React.FC<BoardProps> = ({
           );
         })}
 
-        {/* 3) Círculo central degradê */}
         <circle
           cx={0}
           cy={0}
@@ -89,13 +84,13 @@ const Board: React.FC<BoardProps> = ({
           fill="url(#gradienteBranco)"
         />
 
+       
         <text
           x={0}
-          y={innerRadius - 10}
+          y={innerRadius + 20}    
           textAnchor="middle"
           fontSize="14"
           fill="#000"
-          transform={`rotate(90, 0, ${innerRadius - 10})`}
         >
           Início | Fim
         </text>

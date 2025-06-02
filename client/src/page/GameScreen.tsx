@@ -4,29 +4,29 @@ import Board from "../components/Board/Board";
 import TurnIndicator from "../components/TurnIndicator";
 import PlayerTurnPanel from "../components/PlayerTurnPanel";
 import CategoryLegend from "../components/Board/CategoryLegend";
-import SpinButton from "../components/SpinButton"; 
 import { Player, Category } from "../types/game";
-import avatar1 from "../assets/avatar1.png"
-import avatar2 from "../assets/avatar2.png"
+
+import TokensSelector from "../components/TokenSelector";
 
 const DUMMY_PLAYERS: Player[] = [
   {
     id: "1",
     name: "Jogador 1",
-    avatarUrl: avatar1,
+    avatarUrl: "/avatars/avatar1.png",
     score: 5,
     currentSegment: 0,
     tokenColor: "#E74C3C",
+    tokensLeft: [1, 2, 3, 4, 5],
   },
   {
     id: "2",
     name: "Jogador 2",
-    avatarUrl: avatar2,
+    avatarUrl: "/avatars/avatar2.png",
     score: 3,
     currentSegment: 5,
     tokenColor: "#3498DB",
+    tokensLeft: [1, 2, 3, 4, 5],
   },
-  // … outros jogadores
 ];
 
 const SEGMENT_CATEGORIES: Category[] = Array.from({ length: 30 }, (_, i) => {
@@ -52,49 +52,87 @@ const CATEGORY_NAMES: Record<Category, string> = {
   CT: "Ciência e Tecnologia",
 };
 
+const OUTER_RADIUS = 300;
+const INNER_RADIUS = 250;
+const ROTATION_OFFSET = 90;
+const TOTAL_SEGMENTS = SEGMENT_CATEGORIES.length;
+
 const GameScreen: React.FC = () => {
+  const [players, setPlayers] = React.useState<Player[]>(() =>
+    DUMMY_PLAYERS.map((p) => ({ ...p }))
+  );
+  const [currentPlayerId, setCurrentPlayerId] = React.useState(players[0].id);
   const [currentTurn, setCurrentTurn] = React.useState(1);
-  const [currentPlayerId, setCurrentPlayerId] = React.useState("1");
   const [selectedSegment, setSelectedSegment] = React.useState<number | null>(
     null
   );
-  const [isSpinning, setIsSpinning] = React.useState(false);
-  const [pawns, setPawns] = React.useState<{ id: string; segment: number }[]>(
-    () => DUMMY_PLAYERS.map((p) => ({ id: p.id, segment: p.currentSegment }))
-  );
+  const [isAnswering, setIsAnswering] = React.useState(false);
+
+  const onTokenSelected = (tokenValue: number) => {
+    if (isAnswering) return;
+    setIsAnswering(true);
+
+    
+    const acertou = Math.random() < 0.6;
+    setTimeout(() => {
+ 
+      setPlayers((oldPlayers) =>
+        oldPlayers.map((p) => {
+          if (p.id !== currentPlayerId) return p;
+          return {
+            ...p,
+            tokensLeft: p.tokensLeft.filter((t) => t !== tokenValue),
+          };
+        })
+      );
+
+
+      if (acertou) {
+        setPlayers((oldPlayers) =>
+          oldPlayers.map((p) => {
+            if (p.id !== currentPlayerId) return p;
+            const novaPos =
+              (p.currentSegment + tokenValue) % SEGMENT_CATEGORIES.length;
+            return {
+              ...p,
+              currentSegment: novaPos,
+            };
+          })
+        );
+        setSelectedSegment(
+          (players.find((p) => p.id === currentPlayerId)!.currentSegment +
+            tokenValue) %
+            SEGMENT_CATEGORIES.length
+        );
+      } else {
+        setSelectedSegment(null);
+      }
 
   
-  const handleSpin = () => {
-    if (isSpinning) return; 
-    setIsSpinning(true);
-
-
-    const randomSegment = Math.floor(Math.random() * 30);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      setSelectedSegment(randomSegment);
-
-     
-      setPawns((old) =>
-        old.map((pawn) =>
-          pawn.id === currentPlayerId ? { ...pawn, segment: randomSegment } : pawn
-        )
-      );
-
-     
-      const currentIndex = DUMMY_PLAYERS.findIndex(
-        (p) => p.id === currentPlayerId
-      );
-      const nextPlayer =
-        DUMMY_PLAYERS[(currentIndex + 1) % DUMMY_PLAYERS.length];
+      const currentIndex = players.findIndex((p) => p.id === currentPlayerId);
+      const nextIndex = (currentIndex + 1) % players.length;
+      const nextPlayer = players[nextIndex];
       setCurrentPlayerId(nextPlayer.id);
-      if (nextPlayer.id === DUMMY_PLAYERS[0].id) {
-      
+
+      if (nextIndex === 0) {
         setCurrentTurn((t) => t + 1);
       }
-    }, 2200); 
+
+      setIsAnswering(false);
+    }, 1200);
   };
+
+  const pawns = players.map((p) => ({
+    segmentIndex: p.currentSegment,
+    color: p.tokenColor,
+    size: 24,
+    outerRadius: OUTER_RADIUS,
+    innerRadius: INNER_RADIUS,
+    totalSegments: TOTAL_SEGMENTS,
+    rotationOffset: ROTATION_OFFSET,
+  }));
+
+  const currentPlayer = players.find((p) => p.id === currentPlayerId)!;
 
   return (
     <div className="game-screen">
@@ -108,13 +146,10 @@ const GameScreen: React.FC = () => {
             flexDirection: "column",
           }}
         >
-          <PlayerList
-            players={DUMMY_PLAYERS}
-            currentPlayerId={currentPlayerId}
-          />
+          <PlayerList players={players} currentPlayerId={currentPlayerId} />
         </div>
 
-     
+   
         <div
           style={{
             width: "60%",
@@ -125,7 +160,6 @@ const GameScreen: React.FC = () => {
             position: "relative",
           }}
         >
-       
           <div
             style={{
               position: "absolute",
@@ -138,56 +172,39 @@ const GameScreen: React.FC = () => {
             <TurnIndicator currentTurn={currentTurn} />
           </div>
 
-       
           <div
             style={{
               position: "absolute",
               top: 16,
-              right: "25%", 
+              right: "25%",
               zIndex: 2,
             }}
           >
             <PlayerTurnPanel
-              player={DUMMY_PLAYERS.find((p) => p.id === currentPlayerId)!}
+              player={currentPlayer}
               onSettingsClick={() => alert("Abrir configurações")}
             />
           </div>
 
-        
           <div className="board-container">
             <Board
               categories={SEGMENT_CATEGORIES}
               segmentColors={CATEGORY_COLORS}
               selectedSegment={selectedSegment ?? undefined}
-              onSegmentClick={(idx) => {
-                
-                console.log("Clicou no segmento:", idx);
-              }}
-              pawns={pawns.map((pawn) => {
-                const playerData = DUMMY_PLAYERS.find(
-                  (p) => p.id === pawn.id
-                )!;
-                return {
-                  segmentIndex: pawn.segment,
-                  color: playerData.tokenColor,
-                  size: 12,
-                };
-              })}
-              isSpinning={isSpinning}
+              onSegmentClick={() => {}}
+              pawns={pawns}
             />
           </div>
 
-          
           <div style={{ marginTop: "24px", zIndex: 2 }}>
-            <SpinButton
-              disabled={isSpinning}
-              onClick={handleSpin}
-              text="Girar"
+            <TokensSelector
+              tokensLeft={currentPlayer.tokensLeft}
+              onSelectToken={onTokenSelected}
+              disabled={isAnswering}
             />
           </div>
         </div>
 
-       
         <div
           style={{
             width: "20%",

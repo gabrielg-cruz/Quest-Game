@@ -1,19 +1,23 @@
 export type Category = "M" | "V" | "S" | "EL" | "AE" | "CT";
 
 export interface Player {
-   id: string;
+  id: string;
   name: string;
   avatarUrl: string;
   score: number;
   currentSegment: number;
   tokenColor: string;
-  
+  tokensLeft: number[];
 }
 
 export interface PawnProps {
-  segmentIndex: number;
+    segmentIndex: number;
   color: string;
   size: number;
+  innerRadius: number;
+  outerRadius: number;
+  totalSegments: number;
+  rotationOffset: number;
 }
 
 export interface BoardProps {
@@ -24,6 +28,7 @@ export interface BoardProps {
   pawns?: PawnProps[];
   isSpinning?: boolean;
 }
+
 
 export interface BoardSegmentProps {
   index: number;
