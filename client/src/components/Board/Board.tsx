@@ -3,11 +3,10 @@ import BoardSegment from "./BoardSegment";
 import Pawn from "./Pawn";
 import { BoardProps } from "../../types/game";
 
-
 const outerRadius = 300;
 const innerRadius = 200;
 const centerCircleRadius = innerRadius - 30;
-const rotationOffset = -90; 
+const rotationOffset = -90;
 
 const Board: React.FC<BoardProps> = ({
   categories,
@@ -17,19 +16,26 @@ const Board: React.FC<BoardProps> = ({
   pawns = [],
   isSpinning = false,
 }) => {
-  const totalSegments = categories.length; 
-  const viewBoxSize = (outerRadius + 20) * 2; 
+  const totalSegments = categories.length;
+
+  const specialMultiplier = 1.8;
+
+  const effectiveSlots = totalSegments - 2 + (2 * specialMultiplier);
+  const anglePerSlot = 360 / effectiveSlots;
+  const viewBoxSize = (outerRadius + 40) * 2;
 
   const [rotationStyle, setRotationStyle] = React.useState<string>("rotate(0deg)");
   React.useEffect(() => {
     if (isSpinning && selectedSegment != null) {
       const finalAngle =
-        5 * 360 + (selectedSegment * (360 / totalSegments) - rotationOffset);
+        5 * 360 + (selectedSegment * anglePerSlot - rotationOffset);
       setRotationStyle(`rotate(${finalAngle}deg)`);
     } else {
       setRotationStyle("rotate(0deg)");
     }
-  }, [isSpinning, selectedSegment, totalSegments]);
+  }, [isSpinning, selectedSegment, anglePerSlot]);
+
+  let accumulatedAngle = 0;
 
   return (
     <svg
@@ -54,25 +60,47 @@ const Board: React.FC<BoardProps> = ({
             : undefined,
         }}
       >
-       
         <circle cx={0} cy={0} r={innerRadius + 2} fill="#D9423D" />
 
-      
         {categories.map((cat, idx) => {
-   
-          const color = idx === 0 ? "#FFFFFF" : segmentColors[cat];
+          let color = segmentColors[cat];
+          let label: string = cat;
+          let segmentOuterRadius = outerRadius;
+          let type: "normal" | "start" | "end" = "normal";
+          let slotWidth = anglePerSlot;
+
+          if (idx === 0) {
+            color = "#FFFFFF";
+            label = "Início";
+            segmentOuterRadius = outerRadius + 80;
+            type = "start";
+            slotWidth = anglePerSlot * specialMultiplier;
+          } else if (idx === totalSegments - 1) {
+            color = "#FFFFFF";
+            label = "Fim";
+            segmentOuterRadius = outerRadius + 80;
+            type = "end";
+            slotWidth = anglePerSlot * specialMultiplier;
+          }
+
+          const startAngle = accumulatedAngle - rotationOffset;
+          const endAngle = accumulatedAngle + slotWidth - rotationOffset;
+
+          accumulatedAngle += slotWidth;
+
           return (
             <BoardSegment
               key={idx}
               index={idx}
               category={cat}
-              totalSegments={totalSegments}
-              outerRadius={outerRadius}
+              label={label}
+              startAngle={startAngle}
+              endAngle={endAngle}
+              outerRadius={segmentOuterRadius}
               innerRadius={innerRadius}
               color={color}
-              isSelected={selectedSegment === idx}
+              type={type}
               onClick={() => onSegmentClick && onSegmentClick(idx)}
-              rotationOffset={rotationOffset}
             />
           );
         })}
@@ -83,17 +111,6 @@ const Board: React.FC<BoardProps> = ({
           r={centerCircleRadius}
           fill="url(#gradienteBranco)"
         />
-
-       
-        <text
-          x={0}
-          y={innerRadius + 20}    
-          textAnchor="middle"
-          fontSize="14"
-          fill="#000"
-        >
-          Início | Fim
-        </text>
 
         {pawns.map((pawn, i) => (
           <Pawn

@@ -5,30 +5,28 @@ import { Category } from "../../types/game";
 interface BoardSegmentProps {
   index: number;
   category: Category;
-  totalSegments: number;
+  label: string;
+  startAngle: number;
+  endAngle: number;
   outerRadius: number;
   innerRadius: number;
   color: string;
-  isSelected: boolean;
+  type: "normal" | "start" | "end";
   onClick: () => void;
-  rotationOffset: number;
 }
 
 const BoardSegment: React.FC<BoardSegmentProps> = ({
   index,
   category,
-  totalSegments,
+  label,
+  startAngle,
+  endAngle,
   outerRadius,
   innerRadius,
   color,
-  isSelected,
+  type,
   onClick,
-  rotationOffset,
 }) => {
-  const anglePerSegment = 360 / totalSegments;
-  const startAngle = index * anglePerSegment - rotationOffset;
-  const endAngle = (index + 1) * anglePerSegment - rotationOffset;
-
   const pathData = describeDonutSegment(
     0,
     0,
@@ -38,12 +36,15 @@ const BoardSegment: React.FC<BoardSegmentProps> = ({
     endAngle
   );
 
-
   const midAngle = startAngle + (endAngle - startAngle) / 2;
-  const textRadius = (outerRadius + innerRadius) / 2;
+
+  const textRadius = innerRadius + (type === "normal" ? 55 : 35);
   const rad = (midAngle * Math.PI) / 180;
   const textX = textRadius * Math.cos(rad);
   const textY = textRadius * Math.sin(rad);
+
+  const baseline = type === "normal" ? "middle" : "text-before-edge";
+  const fontSize = type === "normal" ? innerRadius * 0.12 : innerRadius * 0.10;
 
   return (
     <g onClick={onClick} style={{ cursor: "pointer" }}>
@@ -55,21 +56,19 @@ const BoardSegment: React.FC<BoardSegmentProps> = ({
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      {index !== 0 && (
-        <text
-          x={textX}
-          y={textY}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          transform={`rotate(${midAngle}, ${textX}, ${textY})`}
-          fill="#FFF"
-          fontSize={innerRadius * 0.12}
-          style={{ pointerEvents: "none" }}
-        >
-          {category}
-        </text>
-      )}
-     
+
+      <text
+        x={textX}
+        y={textY}
+        textAnchor="middle"
+        dominantBaseline={baseline}
+        transform={`rotate(${midAngle}, ${textX}, ${textY})`}
+        fill={type === "normal" ? "#FFF" : "#000"}
+        fontSize={fontSize}
+        style={{ pointerEvents: "none" }}
+      >
+        {label}
+      </text>
     </g>
   );
 };

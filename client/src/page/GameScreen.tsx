@@ -196,13 +196,6 @@ const GameScreen: React.FC = () => {
             />
           </div>
 
-          <div style={{ marginTop: "24px", zIndex: 2 }}>
-            <TokensSelector
-              tokensLeft={currentPlayer.tokensLeft}
-              onSelectToken={onTokenSelected}
-              disabled={isAnswering}
-            />
-          </div>
         </div>
 
         <div
