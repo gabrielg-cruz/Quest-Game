@@ -1,12 +1,20 @@
+// Novo Board.tsx com suporte a casas especiais bicolores
 import React from "react";
 import BoardSegment from "./BoardSegment";
 import Pawn from "./Pawn";
-import { BoardProps } from "../../types/game";
+import { BoardProps, Category } from "../../types/game";
 
 const outerRadius = 300;
 const innerRadius = 200;
 const centerCircleRadius = innerRadius - 30;
 const rotationOffset = -90;
+
+const casasEspeciais: Record<number, [Category, Category]> = {
+  7: ["CT", "EL"],
+  9: ["AE", "M"],
+  11: ["EL", "S"],
+  16: ["S", "CT"],
+};
 
 const Board: React.FC<BoardProps> = ({
   categories,
@@ -19,16 +27,14 @@ const Board: React.FC<BoardProps> = ({
   const totalSegments = categories.length;
 
   const specialMultiplier = 1.8;
-
-  const effectiveSlots = totalSegments - 2 + (2 * specialMultiplier);
+  const effectiveSlots = totalSegments - 2 + 2 * specialMultiplier;
   const anglePerSlot = 360 / effectiveSlots;
   const viewBoxSize = (outerRadius + 40) * 2;
 
   const [rotationStyle, setRotationStyle] = React.useState<string>("rotate(0deg)");
   React.useEffect(() => {
     if (isSpinning && selectedSegment != null) {
-      const finalAngle =
-        5 * 360 + (selectedSegment * anglePerSlot - rotationOffset);
+      const finalAngle = 5 * 360 + (selectedSegment * anglePerSlot - rotationOffset);
       setRotationStyle(`rotate(${finalAngle}deg)`);
     } else {
       setRotationStyle("rotate(0deg)");
@@ -55,9 +61,7 @@ const Board: React.FC<BoardProps> = ({
         style={{
           transform: rotationStyle,
           transformOrigin: "0 0",
-          transition: isSpinning
-            ? "transform 2.2s cubic-bezier(0.33, 1, 0.68, 1)"
-            : undefined,
+          transition: isSpinning ? "transform 2.2s cubic-bezier(0.33, 1, 0.68, 1)" : undefined,
         }}
       >
         <circle cx={0} cy={0} r={innerRadius + 2} fill="#D9423D" />
@@ -101,16 +105,14 @@ const Board: React.FC<BoardProps> = ({
               color={color}
               type={type}
               onClick={() => onSegmentClick && onSegmentClick(idx)}
+              isSpecial={!!casasEspeciais[idx]}
+              secondCategory={casasEspeciais[idx]?.[1]}
+              categoryColors={segmentColors}
             />
           );
         })}
 
-        <circle
-          cx={0}
-          cy={0}
-          r={centerCircleRadius}
-          fill="url(#gradienteBranco)"
-        />
+        <circle cx={0} cy={0} r={centerCircleRadius} fill="url(#gradienteBranco)" />
 
         {pawns.map((pawn, i) => (
           <Pawn
