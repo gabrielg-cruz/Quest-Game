@@ -7,6 +7,9 @@ import Recover from "../page/Recover/Recover";
 import Store from "../page/Store/Store";
 import SessionPage from "../page/Session/SessionPage";
 import ProtectedSocketLayout from "./ProtectedSocketLayout";
+import GamePage from "../page/GamePage";
+import BoardSandbox from "../page/BoardSandbox";
+import BoardPawnTest from "../page/BoardPawnTest";
 
 export default function AppRoutes() {
     return (
@@ -16,7 +19,9 @@ export default function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/recover" element={<Recover />} />
-
+            <Route path="/game-test" element={<BoardSandbox />} />
+            <Route path="/pawn-test" element={<BoardPawnTest />} />
+            
             {/* rotas protegidas */}
             <Route path="/store" element={<Store />} />
 

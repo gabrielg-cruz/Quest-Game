@@ -1,0 +1,47 @@
+export type Category = "M" | "V" | "S" | "EL" | "AE" | "CT";
+
+export interface PawnProps {
+  segmentIndex: number;
+  size: number;
+  innerRadius: number;
+  outerRadius: number;
+  totalSegments: number;
+  rotationOffset: number;
+  angleOffset?: number;
+  radialOffset?: number;
+  avatarUrl: string; // <-- novo campo
+}
+
+
+export interface PawnProps {
+    segmentIndex: number;
+  color: string;
+  size: number;
+  innerRadius: number;
+  outerRadius: number;
+  totalSegments: number;
+  rotationOffset: number;
+    angleOffset?: number;
+    radialOffset?: number
+}
+
+export interface BoardProps {
+  categories: Category[];
+  segmentColors: Record<Category, string>;
+  selectedSegment?: number;
+  onSegmentClick?: (idx: number) => void;
+  pawns?: PawnProps[];
+  isSpinning?: boolean;
+}
+
+
+export interface BoardSegmentProps {
+  index: number;
+  category: Category;
+  totalSegments: number;
+  outerRadius: number;
+  innerRadius: number;
+  color: string;
+  isSelected: boolean;
+  onClick: () => void;
+}

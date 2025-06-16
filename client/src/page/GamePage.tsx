@@ -91,14 +91,14 @@ export default function GamePage({ sessionId, myPlayerId, players }: GamePagePro
         />
 
         <BoardView
-          board={gameState.board}
+          board={gameState!.board}
           playerStates={gameState.playerStates}
           players={players}
         />
 
         <SidebarActions
           myPlayerId={myPlayerId}
-          myState={myState}
+          myState={myState!}
           currentPlayerId={currentState?.playerId}
           onConfirmMove={handleConfirmMove}
           onUseAbility={handleUseAbility}
