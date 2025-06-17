@@ -7,6 +7,7 @@ import Recover from "../page/Recover/Recover";
 import Store from "../page/Store/Store";
 import SessionPage from "../page/Session/SessionPage";
 import ProtectedSocketLayout from "./ProtectedSocketLayout";
+import FormEditProfile from "../components/EditProfile/EditProfile";
 
 export default function AppRoutes() {
     return (
@@ -24,6 +25,7 @@ export default function AppRoutes() {
                 <Route path="/hub" element={<PlayerHub />} />
                 <Route path="/session/:id" element={<SessionPage />} />
             </Route>
+              <Route path="/edit-profile" element={<FormEditProfile />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
